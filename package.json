@@ -11,6 +11,7 @@
   "dependencies": {
     "body-parser": "*",
     "express": "^5.0.0-beta.1",
+    "faker": "^6.6.6",
     "moment": "*",
     "nunjucks": "*",
     "pg": "^8.11.3"

@@ -56,6 +56,31 @@ class Customer {
     return new Customer(customer);
   }
 
+    /** get a customer by Name. */ // TODO: Work on linking this with nav search bar.
+
+    async get_by_name() {
+      const results = await db.query(
+            `SELECT id,
+                    first_name AS "firstName",
+                    last_name  AS "lastName",
+                    phone,
+                    notes
+             FROM customers
+             WHERE first_name = $1 AND last_name = $2`,
+          [this.firstName, this.lastName],
+      );
+
+      const customer = results.rows[0];
+
+      if (customer === undefined) {
+        const err = new Error(`No such customer: ${id}`);
+        err.status = 404;
+        throw err;
+      }
+
+      return new Customer(customer);
+    }
+
   /** get all reservations for this customer. */
 
   async getReservations() {

@@ -76,6 +76,9 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
   if (req.body === undefined) {
     throw new BadRequestError();
   }
+
+  console.log("REQ", req.params, "REQID", req.params.id);
+
   const customerId = req.params.id;
   const startAt = new Date(req.body.startAt);
   const numGuests = req.body.numGuests;
@@ -87,6 +90,7 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
     numGuests,
     notes,
   });
+
   await reservation.save();
 
   return res.redirect(`/${customerId}/`);
