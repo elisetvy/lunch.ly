@@ -10,17 +10,31 @@ const Reservation = require("./models/reservation");
 
 const router = new express.Router();
 
+
+/** Homepage or displays search result for individual customer. */
+
 router.get("/", async function (req, res, next) {
   if (req.query.search) {
-    const fullName = req.query.search.split(' ');
-    const firstName = fullName[0];
-    const lastName = fullName[1];
-    const customer = await Customer.getByName(firstName, lastName);
-    return res.redirect(`/${customer.id}/`);
+    const customers = await Customer.getByName(req.query.search);
+  return res.render("customer_list.html", { customers, });
   }
 
   const customers = await Customer.all();
   return res.render("customer_list.html", { customers });
+});
+
+/** Get the top ten customers, in terms of # of reservations. */
+
+router.get("/top-ten/", async function (req, res, next) {
+  const customers = await Customer.topTen();
+  const topTen=true;
+  return res.render("customer_list.html", { customers, topTen });
+});
+
+/** Form to add a new customer. */
+
+router.get("/add/", async function (req, res, next) {
+  return res.render("customer_new_form.html");
 });
 
 /** Form to add a new customer. */
@@ -82,8 +96,6 @@ router.post("/:id/add-reservation/", async function (req, res, next) {
   if (req.body === undefined) {
     throw new BadRequestError();
   }
-
-  console.log("REQ", req.params, "REQID", req.params.id);
 
   const customerId = req.params.id;
   const startAt = new Date(req.body.startAt);

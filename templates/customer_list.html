@@ -1,10 +1,18 @@
 {% extends 'base.html' %}
+{% if topTen %}
+{% block title %}Top Ten Customers{% endblock %}
+{% else %}
 {% block title %}Customers{% endblock %}
+{% endif %}
 {% block content %}
 
   <a class="btn btn-primary" style="float: right" href="/add/">Add a Customer</a>
 
-  <h1>Customers</h1>
+  {% if topTen %}
+    <h1>Top Ten Customers</h1>
+  {% else %}
+    <h1>Customers</h1>
+  {% endif %}
 
   <ul style="column-count: 4">
     {% for customer in customers %}

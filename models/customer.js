@@ -31,6 +31,25 @@ class Customer {
     return results.rows.map(c => new Customer(c));
   }
 
+    /** find top 10 customers, in terms of # of reservations. */
+
+    static async topTen() {
+      const results = await db.query(
+            `SELECT customers.id,
+                    customers.first_name AS "firstName",
+                    customers.last_name  AS "lastName",
+                    reservations.customer_id,
+                    COUNT(reservations.customer_id)
+             FROM customers
+             JOIN reservations ON customers.id = reservations.customer_id
+             GROUP BY customers.id, reservations.customer_id
+             ORDER BY COUNT(reservations.customer_id) DESC
+             LIMIT 10`,
+      );
+      return results.rows.map(c => new Customer(c));
+    }
+
+
   /** get a customer by ID. */
 
   static async get(id) {
@@ -58,28 +77,28 @@ class Customer {
 
   /** get a customer by Name. */
 
-  static async getByName(firstName, lastName) {
-      const results = await db.query(
-            `SELECT id,
-                    first_name AS "firstName",
-                    last_name  AS "lastName",
-                    phone,
-                    notes
-             FROM customers
-             WHERE first_name = $1 AND last_name = $2`,
-          [firstName, lastName],
-      );
+  static async getByName(name) {
 
-      const customer = results.rows[0];
+        const results = await db.query(
+              `SELECT id,
+                      first_name AS "firstName",
+                      last_name  AS "lastName",
+                      phone,
+                      notes
+               FROM customers
+               WHERE CONCAT(first_name, ' ', last_name) ILIKE $1`,
+               [`%${name}%`],
+        );
+        const customers = results.rows;
 
-      if (customer === undefined) {
-        const err = new Error(`No such customer: ${id}`);
-        err.status = 404;
-        throw err;
-      }
+        if (customers.length === 0) {
+          const err = new Error(`No such customer: ${name || ""}`);
+          err.status = 404;
+          throw err;
+        }
 
-      return new Customer(customer);
-    }
+        return results.rows.map(c => new Customer(c));
+  }
 
   /** get all reservations for this customer. */
 
@@ -116,8 +135,9 @@ class Customer {
     }
   }
 
+  /** Returns a customer's full name as a string (from first and last name). */
   fullName() {
-    return this.firstName + ' ' + this.lastName;
+    return `${this.firstName} ${this.lastName}`
   }
 }
 
