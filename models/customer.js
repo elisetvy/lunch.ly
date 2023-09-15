@@ -56,9 +56,9 @@ class Customer {
     return new Customer(customer);
   }
 
-    /** get a customer by Name. */ // TODO: Work on linking this with nav search bar.
+  /** get a customer by Name. */
 
-    async get_by_name() {
+  static async getByName(firstName, lastName) {
       const results = await db.query(
             `SELECT id,
                     first_name AS "firstName",
@@ -67,7 +67,7 @@ class Customer {
                     notes
              FROM customers
              WHERE first_name = $1 AND last_name = $2`,
-          [this.firstName, this.lastName],
+          [firstName, lastName],
       );
 
       const customer = results.rows[0];

@@ -10,9 +10,15 @@ const Reservation = require("./models/reservation");
 
 const router = new express.Router();
 
-/** Homepage: show list of customers. */
-
 router.get("/", async function (req, res, next) {
+  if (req.query.search) {
+    const fullName = req.query.search.split(' ');
+    const firstName = fullName[0];
+    const lastName = fullName[1];
+    const customer = await Customer.getByName(firstName, lastName);
+    return res.redirect(`/${customer.id}/`);
+  }
+
   const customers = await Customer.all();
   return res.render("customer_list.html", { customers });
 });
