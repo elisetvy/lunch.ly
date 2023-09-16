@@ -67,7 +67,10 @@ class Reservation {
     }
   }
 
+  /** Returns a customer's full name as a string (from first and last name). */
+  fullName() {
+    return `${this.firstName} ${this.lastName}`
+  }
 }
-
 
 module.exports = Reservation;

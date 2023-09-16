@@ -1,9 +1,11 @@
 {% extends 'base.html' %}
+{% block title %}
 {% if topTen %}
-{% block title %}Top Ten Customers{% endblock %}
+Top Ten Customers
 {% else %}
-{% block title %}Customers{% endblock %}
+Customers
 {% endif %}
+{% endblock %}
 {% block content %}
 
   <a class="btn btn-primary" style="float: right" href="/add/">Add a Customer</a>
